@@ -1,0 +1,3 @@
+[submodule "connex_kicad_libs"]
+	path = connex_kicad_libs
+	url = git@github.com:ConnexPCB/connex_kicad_libs.git
