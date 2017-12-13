@@ -1,4 +1,4 @@
-update=Mon 11 Dec 2017 11:07:56 PM CST
+update=Tue 12 Dec 2017 09:09:13 PM CST
 version=1
 last_client=kicad
 [pcbnew]
@@ -68,3 +68,4 @@ LibName36=/home/birdman/Documents/projects/ConnexPCB/pcb_piano/connex_kicad_libs
 LibName37=/home/birdman/Documents/projects/ConnexPCB/pcb_piano/connex_kicad_libs/sch_libs/connex_mosfets
 LibName38=/home/birdman/Documents/projects/ConnexPCB/pcb_piano/connex_kicad_libs/sch_libs/connex_Resistor
 LibName39=/home/birdman/Documents/projects/ConnexPCB/pcb_piano/connex_kicad_libs/sch_libs/connex_test
+LibName40=connex_captouch
