@@ -1,0 +1,10 @@
+(fp_lib_table
+  (lib (name connex_crystal)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_crystal.pretty)(options "")(descr ""))
+  (lib (name connex_diodes)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_diodes.pretty)(options "")(descr ""))
+  (lib (name connex_inductor)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_inductor.pretty)(options "")(descr ""))
+  (lib (name connex_led)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_led.pretty)(options "")(descr ""))
+  (lib (name connex_smd_misc)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_smd_misc.pretty)(options "")(descr ""))
+  (lib (name connex_test)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_test.pretty)(options "")(descr ""))
+  (lib (name connex_cap_touch)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_cap_touch.pretty)(options "")(descr ""))
+  (lib (name connex_device)(type KiCad)(uri ${KIPRJMOD}/../connex_kicad_libs/pcb_libs/connex_device.pretty)(options "")(descr ""))
+)

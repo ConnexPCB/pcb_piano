@@ -1,4 +1,4 @@
-update=Tue 12 Dec 2017 09:09:13 PM CST
+update=Wed 13 Dec 2017 09:55:48 PM CST
 version=1
 last_client=kicad
 [pcbnew]
@@ -69,3 +69,14 @@ LibName37=/home/birdman/Documents/projects/ConnexPCB/pcb_piano/connex_kicad_libs
 LibName38=/home/birdman/Documents/projects/ConnexPCB/pcb_piano/connex_kicad_libs/sch_libs/connex_Resistor
 LibName39=/home/birdman/Documents/projects/ConnexPCB/pcb_piano/connex_kicad_libs/sch_libs/connex_test
 LibName40=connex_captouch
+LibName41=connex-diode
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
