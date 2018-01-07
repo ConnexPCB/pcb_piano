@@ -20,7 +20,7 @@
 #define LED_PORT		gpioPortE
 #define LED0_PIN		10
 
-volatile uint16_t ms_counter;
+static uint16_t ms_counter;
 
 
 ///////////////////////////////

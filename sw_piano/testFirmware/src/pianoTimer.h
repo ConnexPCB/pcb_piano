@@ -19,7 +19,7 @@
 #include "circBuffer.h"
 //#include "debugUart.h"
 
-#define CIRC_BUFF_NUM_VALUES	255 //Number of uint16_t values are in the circular buffer
+#define CIRC_BUFF_NUM_VALUES	128 //Number of uint16_t values are in the circular buffer
 #define CIRC_BUFF_LEN			(CIRC_BUFF_NUM_VALUES * 2)	//Number of bytes for length of buffer
 
 #define NUM_NOTES	5 //Number of notes on the keyboard
@@ -56,5 +56,7 @@ void updateDutyCycle();
 // @brief Gets next sample for sound
 // @param pointer to sound struct
 uint16_t getNextSample(Note_t * sound);
+
+void initNotes(Note_t * note, double freq);
 
 #endif /* SRC_PIANOTIMER_H_ */

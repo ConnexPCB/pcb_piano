@@ -16,7 +16,7 @@
 #include "em_timer.h"
 #include "em_usart.h"
 #include "em_leuart.h"
-#include "string.h"
+#include <cstring>
 
 #include "circBuffer.h"
 
@@ -33,6 +33,9 @@ void debugUartSendChar(uint8_t c);
 
 // @brief Send string of characters ---Note: this function is blocking
 void debugUartSendString(char * string, uint8_t len);
+
+// @brief Send string of characters without length --- Note: This function is blocking
+void debugUartSendString(char str[]);
 
 // @brief Receive uint8_t from LEUART
 uint8_t debugUartReceive(void);

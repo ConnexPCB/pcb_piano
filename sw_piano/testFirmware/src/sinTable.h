@@ -10,7 +10,10 @@
 
 #include "stdint.h"
 
-extern const uint32_t sineTableLength;
-extern const uint16_t sineTable[8192];
+#define NUM_SINE_SAMPLES 8
+#define AMPLITUDE
+
+extern  uint32_t sineTableLength;
+extern  uint16_t sineTable[NUM_SINE_SAMPLES];
 
 #endif /* SRC_SINTABLE_H_ */

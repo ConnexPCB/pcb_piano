@@ -17,7 +17,7 @@
 #include "debugUart.h"
 #include "pianoTimer.h"
 #include "util.h"
-
+#include "circBuffer.h"
 
 #define LEUART_PORT gpioPortF
 #define LEUART_TX_PIN 0 //PF0
@@ -35,6 +35,8 @@ int main(void)
   //debugUartSendChar('E');
 //  initTimer1();
   //initKeyboardSound();
+static circularBuffer<bool> alphabet(10);
+
 
 
   GPIO_PinModeSet(gpioPortF, 2, gpioModePushPull, 0);
@@ -44,23 +46,10 @@ int main(void)
   uint8_t countingNote = 0;
   //debugUartSendChar('C');
   //playNote(countingNote, 255);
- testBufferInit();
+
   while (1) {
 
-	  if(testBufferEmpty())
-	  {
-		 testBufferFill();
-	  }
-	  //debugUartSendChar('B');
-	  if(ms_counter >= 100)
-	  {
-		  testBufferGetSingle();
-		  //GPIO_PinOutToggle(gpioPortF, 2);
-		  //debugUartSendChar('A');
-		  //playNote(countingNote, 255);
-		  ms_counter = 0;
-		  //countingNote = (countingNote + 1) % 4;
-	  }
+
 
 
 
