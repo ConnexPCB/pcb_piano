@@ -15,12 +15,13 @@
 #include "em_gpio.h"
 #include "em_timer.h"
 
+#include "debugUart.h"
 #define TOP_VAL_GP_TIMER 	14000	//Sets general purpose timer overflow freq t
 
 #define LED_PORT		gpioPortE
 #define LED0_PIN		10
 
-static uint16_t ms_counter;
+//static uint16_t ms_counter;
 
 
 ///////////////////////////////
@@ -29,7 +30,9 @@ void initTimer0(void);
 
 void initClock(void);
 
-void initPins(void);
+//void initPins(void);
 
+void resetTimeMs(void);
 
+uint32_t getTimeMs(void);
 #endif /* SRC_UTIL_H_ */

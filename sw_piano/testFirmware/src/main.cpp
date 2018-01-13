@@ -13,12 +13,33 @@
 #include "em_gpio.h"
 #include "em_usart.h"
 #include "em_leuart.h"
+//#include "stdlib.h"
+
+#include <string>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+
+#include "stdlib.h"
+#include "stdio.h"
+#include "string.h"
+//#include <sstream>
 
 #include "debugUart.h"
 #include "pianoTimer.h"
 #include "util.h"
 #include "circBuffer.h"
 
+
+//namespace patch
+//{
+//    template < typename T > std::string to_string( const T& n )
+//    {
+//        std::ostringstream stm ;
+//        stm << n ;
+//        return stm.str() ;
+//    }
+//}
 #define LEUART_PORT gpioPortF
 #define LEUART_TX_PIN 0 //PF0
 #define LEUART_RX_PIN 1 //PF1
@@ -30,29 +51,72 @@ int main(void)
   /* Chip errata */
   CHIP_Init();
   initClock();
+  GPIO_PinModeSet(gpioPortF, 2, gpioModePushPull, 1);
+  GPIO_PinOutClear(gpioPortF, 2);
   initDebugUart();
   initTimer0();
+  //playNote(0, 10);
+  fillBufferWait();
+  //fillBufferZeroes()
   //debugUartSendChar('E');
 //  initTimer1();
-  //initKeyboardSound();
-static circularBuffer<bool> alphabet(10);
+  initKeyboardSound();
+//static circularBuffer<bool> alphabet(10);
 
 
 
-  GPIO_PinModeSet(gpioPortF, 2, gpioModePushPull, 0);
-  GPIO_PinOutSet(gpioPortF, 2);
+  GPIO_PinModeSet(gpioPortF, 2, gpioModePushPull, 1);
+//  GPIO_PinOutSet(gpioPortF, 2);
   /* Infinite loop */
   char rx_char = 0;
   uint8_t countingNote = 0;
   //debugUartSendChar('C');
   //playNote(countingNote, 255);
+  //debugUartSendChar('A');
+  debugUartSendString("Neat");
+  debugUartSendString("\n\r");
+  int seconds = 0;
 
   while (1) {
+	  if(getTimeMs() >= 2000)
+	  {
+		  //seconds++;
+//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
+//		  		  LEUART0->TXDATA = 'A';
+		  //debugUartSendString("1 Second has passed\n\r");
+		  char buffer[33];
+		  //itoa(seconds, &buffer, 10);
+		  debugUartSendString("Playing Note:");
+		  debugUartSendChar(countingNote + 48);
+		  debugUartSendString("\n\r");
+		  playNote(countingNote, 12000);
+		  countingNote = (countingNote + 1) % 5;
+		  resetTimeMs();
+	  }
+	  fillBufferWait();
 
-
-
-
-
+//
+//	  debugUartSendChar('C');
+//	  if(getTimeMs())
+//	  {
+//		  debugUartSendChar('D');
+//
+//	  }
+//	  if(getTimeMs() > 2)
+//	  {
+//		  debugUartSendChar('E');
+//
+//	  }
+//	  if(getTimeMs() >= 1000)
+//	  {
+//		  //debugUartSendString("DangNeat");
+//		  debugUartSendChar('B');
+//		  resetTimeMs();
+//	  }
+//	  else if(!(getTimeMs() % 100))
+//	  {
+//		  debugUartSendChar('A');
+//	  }
 
 
 //	  if(returnBufferLength <= 100)

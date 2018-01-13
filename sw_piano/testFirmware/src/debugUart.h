@@ -16,7 +16,12 @@
 #include "em_timer.h"
 #include "em_usart.h"
 #include "em_leuart.h"
-#include <cstring>
+#include "em_dma.h"
+
+#include <string>
+#include <cstdint>
+#include <cstdio>
+#include <sstream>
 
 #include "circBuffer.h"
 
@@ -25,12 +30,21 @@
 #define LEUART_RX_PIN 1 //PF1
 #define DEBUG_UART		//Enables send and receive over the LEUART0
 
+typedef struct
+{
+	char str[10];
+	uint8_t len;
+} debugUartMsg_t;
+
 //@brief Initialize debug LEUART for 9600 baud at defualt locations
 void initDebugUart(void);
 
 // @brief Use LEUART_Rx to send char over LEUART
 void debugUartSendChar(uint8_t c);
 
+void debugUartSendUint16(uint16_t c);
+
+void debugUartSendUint8(uint8_t c);
 // @brief Send string of characters ---Note: this function is blocking
 void debugUartSendString(char * string, uint8_t len);
 
@@ -38,7 +52,8 @@ void debugUartSendString(char * string, uint8_t len);
 void debugUartSendString(char str[]);
 
 // @brief Receive uint8_t from LEUART
-uint8_t debugUartReceive(void);
+char debugUartReceive(void);
 
+void initLeuartDma(void);
 
 #endif

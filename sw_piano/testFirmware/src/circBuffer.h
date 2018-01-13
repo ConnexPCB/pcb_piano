@@ -20,7 +20,7 @@ class circularBuffer
 {
 public:
 	circularBuffer(size_t size)
-		: buf_(nullptr)
+		: buf_(new T[size])
 		, size_(size)
 		{
 			//empty constructor
@@ -28,6 +28,7 @@ public:
 	~circularBuffer()
 	{
 		//free( buf_);
+		delete[] buf_;
 	}
 
 	void put(T item)
@@ -44,8 +45,7 @@ public:
 
 	T get(void)
 	{
-		//if(empty())
-		if(1)
+		if(empty())
 		{
 			return T();
 		}
@@ -66,8 +66,8 @@ public:
 	bool empty(void) const
 	{
 		//if head and tail are equal
-		//return (head_ == tail_);
-		return false;
+		return (head_ == tail_);
+		//return false;
 	}
 
 	bool full(void) const

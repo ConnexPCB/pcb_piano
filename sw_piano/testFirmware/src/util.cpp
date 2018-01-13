@@ -8,12 +8,14 @@
 
 #include "util.h"
 
+volatile static uint32_t ms_counter = 0;
+
 //TIMER ISR executes every ms
 void TIMER0_IRQHandler(void)
 {
 	TIMER_IntClear(TIMER0, TIMER_IF_OF);
 	ms_counter++;
-	//debugUartSendChar('0');
+	//debugUartSendChar('M');
 	//testBufferGetSingle();
 	//GPIO_PinOutToggle(gpioPortF, 2);
 }
@@ -75,9 +77,14 @@ void initTimer0(void)
 }
 
 
-
-void initPins(void)
+void resetTimeMs(void)
 {
+	TIMER_IntDisable(TIMER0, TIMER_IF_OF);
+	ms_counter = 0;
+	TIMER_IntEnable(TIMER0, TIMER_IF_OF);
+}
 
-
+uint32_t getTimeMs(void)
+{
+	return ms_counter;
 }
