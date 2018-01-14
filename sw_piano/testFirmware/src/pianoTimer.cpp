@@ -9,10 +9,10 @@
 
 
 
-#define PWM_FREQ  (27000) //Period for 40kHz pwm carrier frequency
+#define PWM_FREQ  (20000) //Period for 40kHz pwm carrier frequency
 ////NOTE: THIS DOES NOT CHANGE ANYTHING////
 #define SOUND_BUFFER_SIZE	2048 //NUmber of buffer samples in the circular buffer
-#define NUM_NOTES 5		//Number of notes on the keyboard. NOTE: Need to adjust the sin table as well
+#define NUM_NOTES 12		//Number of notes on the keyboard. NOTE: Need to adjust the sin table as well
 
 static circularBuffer<uint16_t> soundBuffer(SOUND_BUFFER_SIZE);
 
@@ -80,7 +80,7 @@ static Note_t keyboard[NUM_NOTES];
 
 void initKeyboardSound(void)
 {
-	debugUartSendString("Initializing Keyboard\n\r");
+	debugUartSendString("\n\rInitializing Keyboard\n\r");
 
 	//static circularBuffer<uint16_t> soundBuffer(10);
 
@@ -91,60 +91,61 @@ void initKeyboardSound(void)
 	double freq = 0;
 	double power = 0;
 	//Calculating the notes and frequencies
-//	for(i = 0; i <= NUM_NOTES; i++)
-//	{
-//		debugUartSendString("Note: ");
-//		debugUartSendChar((char)(i + 65));
-//		debugUartSendString("\n\r");
-//		//power = (double)((i - 9.0)/ 12);
-//		//freq = 440.0 * std::pow(2, power);
-//		//initNotes(&keyboard[i], freq);
-//		//TODO: Add uart print line for debug
-//	}
+	for(i = 0; i <= NUM_NOTES; i++)
+	{
+		debugUartSendString("Note: ");
+		debugUartSendChar((char)(i + 65));
+		debugUartSendString("\n\r");
+		power = (double)((i - 9.0)/ 12);
+		freq = 440.0 * std::pow(2, power);
+		//initNotes(&keyboard[i], freq);
+		//TODO: Add uart print line for debug
+		keyboard[i].index = 0;
+		keyboard[i].period = (uint16_t) (PWM_FREQ / freq); //Calculate number of pwm samples per signal period
+	}
 
-	keyboard[0].index = 0;
-	keyboard[0].period = 100;
-	keyboard[0].countUp = true;
-	keyboard[0].mulitplier = 5;
-	keyboard[0].nextDutyCycle = 75;
-	keyboard[0].samplesToPlay = 0;
-
-	keyboard[1].index = 0;
-	keyboard[1].period = 62;
-	keyboard[1].countUp = true;
-	keyboard[1].mulitplier = 8;
-	keyboard[1].nextDutyCycle = 75;
-	keyboard[1].samplesToPlay = 0;
-
-	keyboard[2].index = 0;
-	keyboard[2].period = 31;
-	keyboard[2].countUp = true;
-	keyboard[2].mulitplier = 12;
-	keyboard[2].nextDutyCycle = 75;
-	keyboard[2].samplesToPlay = 0;
-
-	keyboard[3].index = 0;
-	keyboard[3].period = 15;
-	keyboard[3].countUp = true;
-	keyboard[3].mulitplier = 15;
-	keyboard[3].nextDutyCycle = 75;
-	keyboard[3].samplesToPlay = 0;
-
-	keyboard[4].index = 0;
-	keyboard[4].period = 9;
-	keyboard[4].countUp = true;
-	keyboard[4].mulitplier = 20;
-	keyboard[4].nextDutyCycle = 75;
-	keyboard[4].samplesToPlay = 0;
+//	keyboard[0].index = 0;
+//	keyboard[0].period = 100;
+//	keyboard[0].countUp = true;
+//	keyboard[0].mulitplier = 5;
+//	keyboard[0].nextDutyCycle = 75;
+//	keyboard[0].samplesToPlay = 0;
+//
+//	keyboard[1].index = 0;
+//	keyboard[1].period = 62;
+//	keyboard[1].countUp = true;
+//	keyboard[1].mulitplier = 8;
+//	keyboard[1].nextDutyCycle = 75;
+//	keyboard[1].samplesToPlay = 0;
+//
+//	keyboard[2].index = 0;
+//	keyboard[2].period = 31;
+//	keyboard[2].countUp = true;
+//	keyboard[2].mulitplier = 12;
+//	keyboard[2].nextDutyCycle = 75;
+//	keyboard[2].samplesToPlay = 0;
+//
+//	keyboard[3].index = 0;
+//	keyboard[3].period = 15;
+//	keyboard[3].countUp = true;
+//	keyboard[3].mulitplier = 15;
+//	keyboard[3].nextDutyCycle = 75;
+//	keyboard[3].samplesToPlay = 0;
+//
+//	keyboard[4].index = 0;
+//	keyboard[4].period = 9;
+//	keyboard[4].countUp = true;
+//	keyboard[4].mulitplier = 20;
+//	keyboard[4].nextDutyCycle = 75;
+//	keyboard[4].samplesToPlay = 0;
 }
 
 void initNotes(Note_t * note, double freq)
 {
-	note->index = 0;
-	note->period = (uint16_t) (PWM_FREQ / freq); //Calculate number of pwm samples per signal period
-	note->play	= false;
-	debugUartSendUint16(note->period);
-	debugUartSendString("\n\r");
+
+	//note->play	= false;
+	//debugUartSendUint16(note->period);
+	//debugUartSendString("\n\r");
 }
 
 void initTimer2(uint16_t freq)
@@ -179,9 +180,9 @@ void initTimer2(uint16_t freq)
 	TIMER_InitCC(TIMER2, 2, &timerCCInit);
 	TIMER2->ROUTE = (3 << 16) |(1 << 2);         // connect PWM output (timer2, channel 2, Location 3) to PE13 (LED0)
 	//Set Top value for Timer with given frequency
-	//topValue = CMU_ClockFreqGet(cmuClock_HFPER)/freq;
+	topValue = CMU_ClockFreqGet(cmuClock_HFPER)/freq;
 	//topValue = 750;
-	topValue = 750;
+	//topValue = 750;
 	TIMER_TopSet(TIMER2, topValue);
 
 	debugUartSendString("Top Val: ");
@@ -282,12 +283,12 @@ void updateDutyCycle()
 
 uint16_t getNextSample(Note_t * note)
 {
-////	//Calculate pointer in the table of sine calculations
-////	// Converts sound->index  from [0, sound->period) to [0, sine_table_length)
-//	uint32_t ptr = note->index * returnSinSize() / note->period;
-//	//Calculate next index
-//	note->index = (note->index + 1) % note->period;
-//	return returnSinIndex(ptr);
+//	//Calculate pointer in the table of sine calculations
+//	// Converts sound->index  from [0, sound->period) to [0, sine_table_length)
+	uint32_t ptr = note->index * returnSinSize() / note->period;
+	//Calculate next index
+	note->index = (note->index + 1) % note->period;
+	return returnSinIndex(ptr);
 //	//return 375;
 //	if(note->countUp)
 //	{

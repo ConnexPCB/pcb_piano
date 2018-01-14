@@ -78,7 +78,7 @@ int main(void)
   int seconds = 0;
 
   while (1) {
-	  if(getTimeMs() >= 2000)
+	  if(getTimeMs() >= 1500)
 	  {
 		  //seconds++;
 //		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
@@ -90,7 +90,7 @@ int main(void)
 		  debugUartSendChar(countingNote + 48);
 		  debugUartSendString("\n\r");
 		  playNote(countingNote, 12000);
-		  countingNote = (countingNote + 1) % 5;
+		  countingNote = (countingNote + 1) % 12;
 		  resetTimeMs();
 	  }
 	  fillBufferWait();
