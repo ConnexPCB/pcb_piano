@@ -56,105 +56,12 @@ void initDebugUart(void)
 	};
 	LEUART_Init(LEUART0, &leuart_init);
 
-
-	uint8_t testMessageLength = 25;
-	char testMessage[25] = "LEUART Init";
-	//debugUartSendString("LEUART Init");
-	//debugUartSendString(testMessage, testMessageLength);
-	 /* LF register about to be modified require sync. busy check */
-	  //LEUART_Sync(LEUART0, LEUART_SYNCBUSY_TXDATA);
-	  debugUartCharTxBuff.put('A');
-	while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-		  LEUART0->TXDATA = debugUartCharTxBuff.get();
-
-	debugUartSendChar('B');
-	debugUartSendChar('C');
-	debugUartSendString("LEUART is Initialized!");
-
-//
-//	  if(val == 'E')
-//	  {
-//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  //debugUartCharTxBuff.put('B');
-//		  LEUART0->TXDATA = (uint32_t)'E';
-//	  }
-//	  if(val == 'F')
-//	  {
-//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  //debugUartCharTxBuff.put('B');
-//		  LEUART0->TXDATA = (uint32_t)'F';
-//	  }
-//	  if(val == 'G')
-//	  {
-//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  //debugUartCharTxBuff.put('B');
-//		  LEUART0->TXDATA = (uint32_t)'F';
-//	  }
-//	  if(val == 0)
-//	  {
-//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  //debugUartCharTxBuff.put('B');
-//		  LEUART0->TXDATA = (uint32_t)'0';
-//	  }
-//	  if(val != 0)
-//	  {
-//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  //debugUartCharTxBuff.put('B');
-//		  LEUART0->TXDATA = (uint32_t)'1';
-//	  }
-//	  if(val >= 0)
-//	  {
-//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  //debugUartCharTxBuff.put('B');
-//		  LEUART0->TXDATA = (uint32_t)'+';
-//	  }
-//	  if(val >= 65)
-//	  {
-//		  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  //debugUartCharTxBuff.put('B');
-//		  LEUART0->TXDATA = (uint32_t)'+';
-//	  }
-//	  if(val >= 100)
-//		  {
-//			  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//			  //debugUartCharTxBuff.put('B');
-//			  LEUART0->TXDATA = (uint32_t)'2';
-//		  }
-//
-//	  uint8_t i = 0;
-//	  for(i = 0; i < 127; i++)
-//	  {
-//		  if(val > i)
-//			  {
-//				  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//				  //debugUartCharTxBuff.put('B');
-//				  LEUART0->TXDATA = (uint32_t)'>';
-//			  }
-//		  if(val == i)
-//		  			  {
-//		  				  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  				  //debugUartCharTxBuff.put('B');
-//		  				  LEUART0->TXDATA = (uint32_t)'=';
-//		  			  }
-//		  if(val < i)
-//		  			  {
-//		  				  while(!(LEUART0->STATUS & LEUART_STATUS_TXBL));
-//		  				  //debugUartCharTxBuff.put('B');
-//		  				  LEUART0->TXDATA = (uint32_t)'L';
-//		  			  }
-//	  }
-	  //val = debugUartCharTxBuff.get();
-//}
+	debugUartSendString("\n\rLEUART Is Initialized!\n\r");
 }
 
 // @brief Use LEUART_Rx to send char over LEUART
 void debugUartSendChar(uint8_t c)
 {
-//	#ifdef DEBUG_UART
-//		LEUART_Tx(LEUART0, c);
-//	#endif
-	//debugUartMsg_t temp = { c, 1};
-	//debugUartMsgTxBuff.put(temp);
 	if(debugUartCharTxBuff.empty() && (LEUART0->STATUS & LEUART_STATUS_TXBL))
 	{
 		LEUART0->TXDATA = c;
@@ -168,49 +75,32 @@ void debugUartSendChar(uint8_t c)
 // @brief Add uint16_t as hex to the uart buffer
 void debugUartSendUint16(uint16_t c)
 {
-//	#ifdef DEBUG_UART
-//		LEUART_Tx(LEUART0, c);
-//	#endif
-	//debugUartMsg_t temp = { c, 1};
-	//debugUartMsgTxBuff.put(temp);
-	uint8_t i = 0;
+//	uint8_t i = 0;
 	char temp = 0;
-	for(i = 0; i < 4; i+= 4)
-	{
-		temp = (char)((c >> i) & 0x00F);
-		debugUartSendChar(temp + (temp > 9 ? 48 : 65));
+	temp = (char)((c >> 12) & 0x000F);
+	debugUartSendChar(temp + (temp > 9 ? 55 : 48));
+	temp = (char)((c >> 8) & 0x000F);
+	debugUartSendChar(temp + (temp > 9 ? 55 : 48));
+	temp = (char)((c >> 4) & 0x000F);
+	debugUartSendChar(temp + (temp > 9 ? 55 : 48));
+	temp = (char)((c >> 0) & 0x000F);
+	debugUartSendChar(temp + (temp > 9 ? 55 : 48));
 
-	}
+
+
 }
 void debugUartSendUint8(uint8_t c)
 {
-//	#ifdef DEBUG_UART
-//		LEUART_Tx(LEUART0, c);
-//	#endif
-	//debugUartMsg_t temp = { c, 1};
-	//debugUartMsgTxBuff.put(temp);
-	uint8_t i = 0;
 	char temp = 0;
-	for(i = 0; i < 2; i+= 4)
-	{
-		temp = (char)((c >> i) & 0x000F);
-		debugUartSendChar(temp + (temp > 9 ? 48 : 65));
-
-	}
+	temp = (char)((c >> 4) & 0x000F);
+	debugUartSendChar(temp + (temp > 9 ? 55 : 48));
+	temp = (char)((c >> 0) & 0x000F);
+	debugUartSendChar(temp + (temp > 9 ? 55 : 48));
 }
 
 // @brief Send string of characters ---Note: this function is blocking
 void debugUartSendString(const char str[], uint8_t len)
 {
-//	#ifdef DEBUG_UART
-//	uint8_t i = 0;
-//	for(i = 0; i < len; i++)
-//	{
-//		debugUartSendChar(string[i]);
-//	}
-//	#endif
-	//debugUartMsg_t msg = {*str, len};
-	//debugUartMsgTxBuff.put(msg);
 	uint8_t i = 0;
 	if(debugUartCharTxBuff.empty() && (LEUART0->STATUS & LEUART_STATUS_TXBL))
 	{
@@ -234,16 +124,6 @@ void debugUartSendString(const char str[], uint8_t len)
 
 void debugUartSendString(char str[])
 {
-//	#ifdef DEBUG_UART
-//	uint8_t len = std::strlen(str);
-//	uint8_t i = 0;
-//	for(i = 0; i < len; i++)
-//	{
-//		debugUartSendChar(str[i]);
-//	}
-//	#endif
-//	debugUartMsg_t msg = {*str, std::strlen(str)};
-//	debugUartMsgTxBuff.put(msg);
 	uint8_t i = 0;
 	if(debugUartCharTxBuff.empty() && (LEUART0->STATUS & LEUART_STATUS_TXBL))
 	{
@@ -267,9 +147,5 @@ void debugUartSendString(char str[])
 // @brief Receive uint8_t from LEUART
 char debugUartReceive(void)
 {
-//	#ifdef DEBUG_UART
-//	return LEUART_Rx(LEUART0);
-//	#endif
-	//return debugUartMsgRxBuff.get();
 	return debugUartCharRxBuff.get();
 }

@@ -15,9 +15,6 @@ void TIMER0_IRQHandler(void)
 {
 	TIMER_IntClear(TIMER0, TIMER_IF_OF);
 	ms_counter++;
-	//debugUartSendChar('M');
-	//testBufferGetSingle();
-	//GPIO_PinOutToggle(gpioPortF, 2);
 }
 
 void initClock(void)
@@ -25,12 +22,6 @@ void initClock(void)
 	CMU_HFRCOBandSet(cmuHFRCOBand_21MHz);
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	CMU_ClockEnable(cmuClock_TIMER0, true);
-
-//	GPIO_PinModeSet(gpioPortD, 7, gpioModePushPull, 0);
-//	CMU->CTRL &= ~(0x7 << 20); //HFRCO clock out to clock out multiplexer
-//	CMU->ROUTE |= (1 << 0) | (2 << 2); //Enable clock out to CLK0 LOC2
-
-
 }
 
 void initTimer0(void)
@@ -73,7 +64,7 @@ void initTimer0(void)
 	TIMER_IntEnable(TIMER0, TIMER_IF_OF);        // enable Timer0 overflow interrupt
 	NVIC_EnableIRQ(TIMER0_IRQn);                 // enable Timer0 interrupt vector in NVIC
 	TIMER_Init(TIMER0, &timerGPInit);            // apply general purpose configuration to timer0
-
+	debugUartSendString("\n\rTimer0 Is Initialized\n\r");
 }
 
 

@@ -38,49 +38,11 @@ DMA_DESCRIPTOR_TypeDef dmaControlBlock[DMA_CHAN_COUNT * 2] __attribute__ ((align
 #error Undefined toolkit, need to define alignment
 #endif
 
-/* Switch to allow alternation between the two strings */
-//bool     alternateSwitch = false;
 static uint16_t Max_Table_Size = 0;
 static bool primaryBuffActive = true;
-static bool altBufferEmptyFlag = false;
-static bool PrimaryBufferEmtpyFlag = false;
-//uint32_t rtcCountBetweenWakeup;
 
 /* DMA callback structure */
 DMA_CB_TypeDef cb[DMA_CHAN_COUNT];
-
-/* DMA init structure */
-//DMA_Init_TypeDef dmaInit = {
-//  .hprot        = 0,                    /* No descriptor protection */
-//  .controlBlock = dmaControlBlock,      /* DMA control block alligned to 256 */
-//};
-
-
-/* Setting up DMA channel */
-//DMA_CfgChannel_TypeDef chnlCfg =
-//{
-//  false,                   /* Normal priority */
-//  false,                   /* No interupt for callback function */
-//  DMAREQ_LEUART0_TXBL,     /* Set LEUART1 TX buffer empty, as source of DMA signals */
-//  &(cb[DMA_CHANNEL]),      /* Callback */
-//};
-//DMA_CfgChannel_TypeDef chnlCfg =
-//{
-//  .highPri   = false,                   /* Normal priority */
-//  .enableInt = false,                   /* No interupt for callback function */
-//  .select    = DMAREQ_LEUART0_TXBL,     /* Set LEUART1 TX buffer empty, as source of DMA signals */
-//  .cb        = &(cb[DMA_CHANNEL]),      /* Callback */
-//};
-
-//DMA_CfgDescr_TypeDef descrCfg =
-//{
-//  .dstInc  = dmaDataIncNone,    /* Do not increment destination address */
-//  .srcInc  = dmaDataInc1,       /* Increment source address by one byte */
-//  .size    = dmaDataSize1,      /* Data size is one byte */
-//  .arbRate = dmaArbitrate1,     /* Rearbitrate for each byte recieved */
-//  .hprot   = 0,                 /* No read/write source protection */
-//};
-
 
 /**************************************************************************//**
  * @brief  DMA Callback function
@@ -95,18 +57,7 @@ void dmaTransferDone(unsigned int channel, bool primary, void *user)
   //(void) primary;
   *((bool *)user) = true; //Set clear buffer flag
   primaryBuffActive = primary;
-  if(primary)
-  {
-	  //debugUartSendChar('A');
-	  //alt
-  }
-  else
-  {
-	  //debugUartSendChar('B');
-  }
-		/* Disable DMA wake-up from LEUART1 TX */
-//  LEUART0->CTRL &= ~LEUART_CTRL_TXDMAWU;
-  //TIMER2->CTRL &= ~TIMER_CTRL_;
+
   DMA_RefreshPingPong(channel,
 		  	  	  	  primary,
 					  false,
@@ -115,27 +66,6 @@ void dmaTransferDone(unsigned int channel, bool primary, void *user)
 					  Max_Table_Size - 1,
 					  false);
 }
-
-//void setupLeuartDma(void)
-//{
-//  /* Setting call-back function */
-//  cb[DMA_CHANNEL].cbFunc  = dmaTransferDone;
-//  cb[DMA_CHANNEL].userPtr = NULL;
-//
-//  /* Initializing DMA, channel and desriptor */
-//  DMA_Init(&dmaInit);
-//  DMA_CfgChannel(DMA_CHANNEL, &chnlCfg);
-//  DMA_CfgDescr(DMA_CHANNEL, true, &descrCfg);
-//
-//  /* Set new DMA destination address directly in the DMA descriptor */
-//  dmaControlBlock->DSTEND = &LEUART0->TXDATA;
-//
-//  /* Enable DMA Transfer Complete Interrupt */
-//  DMA->IEN = DMA_IEN_CH0DONE;
-//
-//  /* Enable DMA interrupt vector */
-//  NVIC_EnableIRQ(DMA_IRQn);
-//}
 
 void setupPwnDma(uint16_t * bufferA, uint16_t * bufferB, uint16_t bufferLength, bool * bufferEmptyFlag)
 {
@@ -190,30 +120,6 @@ void setupPwnDma(uint16_t * bufferA, uint16_t * bufferB, uint16_t bufferLength, 
 bool isPrimaryBuffActive(void)
 {
 	return primaryBuffActive;
-}
-
-bool isBufferEmpty(bool primary)
-{
-	if(primary)
-	{
-		return PrimaryBufferEmtpyFlag;
-	}
-	else
-	{
-		return altBufferEmptyFlag;
-	}
-}
-
-void clearBufferEmptyFlag(bool primary)
-{
-	if(primary)
-	{
-		PrimaryBufferEmtpyFlag = 0;
-	}
-	else
-	{
-		altBufferEmptyFlag = 0;
-	}
 }
 
 
