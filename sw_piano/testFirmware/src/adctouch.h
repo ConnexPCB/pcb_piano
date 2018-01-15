@@ -27,5 +27,8 @@ void setupTimer0Ch0(void);
 
 void setupTimer1Ch1(void);
 uint16_t getNewVal(void);
+void updateButtons(void);
+
+bool getButton(uint8_t btn);
 
 #endif /* ADCTOUCH_H_ */

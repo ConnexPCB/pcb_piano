@@ -8,23 +8,33 @@
 #include "adctouch.h"
 volatile static bool newVal = false;
 volatile static uint16_t theNewCCVal = 0;
+static uint16_t capTouchRawBuffer[5];
+static bool isButtonPressed[5];
+static uint8_t rawBufferIndex = 0;
+
+
 void TIMER1_IRQHandler(void)
 {
-	if(TIMER1->IF & TIMER_IF_OF)
-		{
-			TIMER_IntClear(TIMER1, TIMER_IF_OF);
-			GPIO_PinOutToggle(gpioPortF, 3);
-	//		newVal = true;
-	//		theNewCCVal = TIMER1->CC[0].CCV;
-		}
-	else if(TIMER1->IF & TIMER_IF_CC0)
+	if(TIMER1->IF & TIMER_IF_CC0)
 	{
 		TIMER_IntClear(TIMER1, TIMER_IFC_CC0);
-		GPIO_PinOutToggle(gpioPortF, 2);
-		newVal = true;
-		theNewCCVal = TIMER1->CC[0].CCV;
+		//GPIO_PinOutToggle(gpioPortF, 2);
+		//newVal = true;
+		//theNewCCVal = TIMER1->CC[0].CCV;
+		capTouchRawBuffer[rawBufferIndex] = TIMER1->CC[0].CCV;
+		rawBufferIndex = (rawBufferIndex + 1) % 5;
+		//ACMP_CapsenseChannelSet(ACMP0, (acmpChannel0 + rawBufferIndex));
+		ACMP0->INPUTSEL = (ACMP0->INPUTSEL & ~(0x07)) | rawBufferIndex;
 		//debugUartSendUint16(theNewCCVal);
 	}
+//	if(TIMER1->IF & TIMER_IF_OF)
+//		{
+//			TIMER_IntClear(TIMER1, TIMER_IF_OF);
+//			GPIO_PinOutToggle(gpioPortF, 3);
+//	//		newVal = true;
+//	//		theNewCCVal = TIMER1->CC[0].CCV;
+//		}
+
 
 
 }
@@ -61,10 +71,10 @@ void setupCapTouch(void)
 	PRS_SourceSignalSet(0, PRS_CH_CTRL_SOURCESEL_ACMP0, PRS_CH_CTRL_SIGSEL_ACMP0OUT, prsEdgePos);
 
 	GPIO_PinModeSet(gpioPortA, 0, gpioModePushPull, 1);
-	PRS->ROUTE |= PRS_ROUTE_CH0PEN;
+	//PRS->ROUTE |= PRS_ROUTE_CH0PEN;
 	/////NOTE: THIS IS I2C PORT REMOVE!!!////
 	GPIO_PinModeSet(gpioPortD, 6, gpioModePushPull, 0);
-	ACMP_GPIOSetup(ACMP0, 2, true, false); //Set ACMP_Output to Location 2 (PD6)
+	//ACMP_GPIOSetup(ACMP0, 2, true, false); //Set ACMP_Output to Location 2 (PD6)
 	debugUartSendString("End Cap Touch Init\r\n");
 }
 
@@ -171,4 +181,25 @@ uint16_t getNewVal(void)
 	{
 		return 0;
 	}
+}
+
+void updateButtons(void)
+{
+	uint8_t i = 0;
+	for(i = 0; i < 5; i++)
+	{
+		if(capTouchRawBuffer[i] < 100)
+		{
+			isButtonPressed[i] = true;
+		}
+		else
+		{
+			isButtonPressed[i] = false;
+		}
+	}
+}
+
+bool getButton(uint8_t btn)
+{
+	return isButtonPressed[btn];
 }

@@ -54,13 +54,14 @@ int main(void)
   setupCapTouch();
 
   debugUartSendString("\n\rStarting The Coolest Shit Ever\n\r");
-  int seconds = 0;
-  uint8_t countingNote = 0;
+//  int seconds = 0;
+//  uint8_t countingNote = 0;
   char rx_char = 0;
-
+uint8_t i = 0;
   uint16_t count = 0; //Temp for Cap touch
 
   while (1) {
+	  updateButtons();
 //	  if(getTimeMs() >= 1500)
 //	  {
 //		  seconds++;
@@ -92,14 +93,15 @@ int main(void)
 		  resetTimeMs();
 
 	  }
-	  count = 1;
-	  count = getNewVal();
-	  if(count > 0 && count <= 100)
+	  for(i = 0; i < 5; i++)
 	  {
-		  debugUartSendString("Button is Pressed\n\r");
-//		  debugUartSendUint16(count);
-//		  debugUartSendString("\n\r");
-		  playNote(0,3000);
+		  if(getButton(i))
+		  {
+			  debugUartSendString("Button is Pressed: ");
+			  debugUartSendUint8(count);
+			  debugUartSendString("\n\r");
+			  playNote((3+i),3000);
+		  }
 	  }
 	  //else if(count > 100 && count <= 200)
 //	  {
