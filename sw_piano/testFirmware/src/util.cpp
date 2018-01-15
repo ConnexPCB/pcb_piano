@@ -9,12 +9,35 @@
 #include "util.h"
 
 volatile static uint32_t ms_counter = 0;
+volatile static uint8_t capTouchScanDelay = 0;
 
 //TIMER ISR executes every ms
 void TIMER0_IRQHandler(void)
 {
-	TIMER_IntClear(TIMER0, TIMER_IF_OF);
-	ms_counter++;
+	if(TIMER0->IF & TIMER_IF_OF)
+	{
+		TIMER_IntClear(TIMER0, TIMER_IF_OF);
+		ms_counter++;
+		capTouchScanDelay++;
+		if(TIMER0->IF & TIMER_IF_CC0)
+		{
+			//GPIO_PinOutToggle(gpioPortF, 2);
+			TIMER_IntClear(TIMER0, TIMER_IF_CC0);
+		}
+//		if(capTouchScanDelay >= 9)
+//		{
+//			GPIO_PinOutToggle(gpioPortF, 3);
+//			TIMER_IntSet(TIMER0, TIMER_IF_CC0);
+//			capTouchScanDelay = 0;
+//		}
+
+	}
+//	else if(TIMER0->IF & TIMER_IF_CC0)
+//	{
+//		TIMER_IntClear(TIMER0, TIMER_IFC_CC0);
+//		//GPIO_PinOutToggle(gpioPortF, 3);
+//	}
+
 }
 
 void initClock(void)

@@ -14,17 +14,21 @@ static circularBuffer<char> debugUartCharRxBuff(100);
 
 void LEUART0_IRQHandler(void)
 {
-	GPIO_PinOutSet(gpioPortF, 2);
-	if(LEUART_IntGet(LEUART0) & (LEUART_IFC_TXC)) //If TXF flag is set
+	//GPIO_PinOutSet(gpioPortF, 2);
+	if(LEUART_IntGet(LEUART0) & (LEUART_IF_TXC)) //If TXF flag is set
 	{
 
 		LEUART_IntClear(LEUART0, LEUART_IFC_TXC);
 		if(!debugUartCharTxBuff.empty())
 		{
-			GPIO_PinOutClear(gpioPortF, 2);
 			LEUART0->TXDATA = (uint32_t)debugUartCharTxBuff.get();
 		}
 
+	}
+	else if(LEUART_IntGet(LEUART0) & (LEUART_IF_RXDATAV)) //If RXF flag is set
+	{
+		//LEUART_IntClear(LEUART0, LEUART_IFC_RXD);
+		debugUartCharRxBuff.put(LEUART0->RXDATA);
 	}
 }
 //@brief Initialize debug LEUART for 9600 baud at defualt locations
@@ -42,7 +46,9 @@ void initDebugUart(void)
 	LEUART0->ROUTE = (3 << 8) | 0x3;	//Use location #3
 
 
-	LEUART_IntEnable(LEUART0, (1<<0)); //Set TXC Transmit complete Interrupt
+	LEUART_IntEnable(LEUART0, LEUART_IEN_TXC); //Set TXC Transmit complete Interrupt
+	LEUART_IntEnable(LEUART0, LEUART_IEN_RXDATAV);
+
 	NVIC_EnableIRQ(LEUART0_IRQn);
 
 	LEUART_Init_TypeDef leuart_init =
@@ -147,5 +153,12 @@ void debugUartSendString(char str[])
 // @brief Receive uint8_t from LEUART
 char debugUartReceive(void)
 {
-	return debugUartCharRxBuff.get();
+	if(!debugUartCharRxBuff.empty())
+	{
+		return debugUartCharRxBuff.get();
+	}
+	else
+	{
+		return 0;
+	}
 }

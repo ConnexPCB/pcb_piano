@@ -29,7 +29,7 @@ void initKeyboardSound(void)
 		debugUartSendChar((char)(i + 65));
 		debugUartSendString("\n\r");
 		////Calculate the frequency of a note based on steps above/below C
-		power = (double)((i - 9.0)/ 12);
+		power = (double)((i - 8.0)/ 12);
 		freq = 440.0 * std::pow(2, power);
 
 		keyboard[i].index = 0;
@@ -70,7 +70,12 @@ void initTimer2(uint16_t freq)
 	TIMER_InitCC(TIMER2, 2, &timerCCInit);
 	TIMER2->ROUTE = (3 << 16) |(1 << 2);         // connect PWM output (timer2, channel 2, Location 3) to PE13 (LED0)
 	//Set Top value for Timer with given frequency
-	topValue = CMU_ClockFreqGet(cmuClock_HFPER)/freq;
+	uint32_t clock_freq = CMU_ClockFreqGet(cmuClock_HFPER);
+	debugUartSendString("Sys Freq: ");
+	debugUartSendUint16((uint16_t)(clock_freq >> 16));
+	debugUartSendUint16((uint16_t)(clock_freq & 0x0FF));
+	debugUartSendString("\r\n");
+	topValue = clock_freq/freq;
 	TIMER_TopSet(TIMER2, topValue);
 	debugUartSendString("Freq: ");
 	debugUartSendUint16((uint16_t)freq);
@@ -184,5 +189,6 @@ void fillBufferNumSamples(uint8_t numSamples)
 
 void playNote(uint8_t note, uint32_t num_samples)
 {
+	if(note >= 0 && note <= NUM_NOTES)
 	keyboard[note].samplesToPlay = num_samples;
 }
