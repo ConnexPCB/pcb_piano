@@ -67,7 +67,7 @@ void dmaTransferDone(unsigned int channel, bool primary, void *user)
 					  false);
 }
 
-void setupPwnDma(uint16_t * bufferA, uint16_t * bufferB, uint16_t bufferLength, bool * bufferEmptyFlag)
+void setupPwnDma(uint16_t * bufferA, uint16_t * bufferB, uint16_t bufferLength, volatile bool * bufferEmptyFlag)
 {
 
 	Max_Table_Size = bufferLength;
@@ -82,7 +82,7 @@ void setupPwnDma(uint16_t * bufferA, uint16_t * bufferB, uint16_t bufferLength, 
 
 	/* Setting call-back function */
 	cb[DMA_CHANNEL].cbFunc  = dmaTransferDone;
-	cb[DMA_CHANNEL].userPtr = bufferEmptyFlag;
+	cb[DMA_CHANNEL].userPtr = (void *)bufferEmptyFlag;
 
 	//Configuring the DMA Channel
 	DMA_CfgChannel_TypeDef chnlCfg =

@@ -83,9 +83,9 @@ public:
 
 private:
 	T* buf_;
-	uint32_t head_ = 0;
-	uint32_t tail_ = 0;
-	uint32_t size_ = 0;
+	volatile uint32_t head_ = 0;
+	volatile uint32_t tail_ = 0;
+	volatile uint32_t size_ = 0;
 };
 
 

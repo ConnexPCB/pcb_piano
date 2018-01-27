@@ -10,31 +10,35 @@
 uint16_t PWMTableA[PWM_TABLE_SIZE];
 uint16_t PWMTableB[PWM_TABLE_SIZE];
 
-static bool bufferEmptyFlag = true; //Flag to signal when buffer is empty of full
+volatile static bool bufferEmptyFlag = true; //Flag to signal when buffer is empty of full
 
 static Note_t keyboard[NUM_NOTES];
 
 void initKeyboardSound(void)
 {
 	debugUartSendString("\n\rInitializing Keyboard\n\r");
-
 	initTimer2(PWM_FREQ);	//Start Timer2 channel 2 for PWM
+
 	uint8_t i = 0;
 	double freq = 0;
 	double power = 0;
 	//Calculating the notes and frequencies
-	for(i = 0; i <= NUM_NOTES; i++)
+	for(i = 0 ; i < NUM_NOTES; i++)
 	{
 		debugUartSendString("Note: ");
-		debugUartSendChar((char)(i + 65));
-		debugUartSendString("\n\r");
+		debugUartSendChar((char)(i + 48));
+		debugUartSendString(" Samples: ");
 		////Calculate the frequency of a note based on steps above/below C
-		power = (double)((i - 8.0)/ 12);
-		freq = 440.0 * std::pow(2, power);
-
+		//power = (double)((i + 24)/ 12);
+		//freq = 440.0 * std::pow(2, power);
+		//freq = 2000 + (i * 500);
 		keyboard[i].index = 0;
-		keyboard[i].period = (uint16_t) (PWM_FREQ / freq); //Calculate number of pwm samples per signal period
+//		keyboard[i].period = (uint16_t) (PWM_FREQ / freq); //Calculate number of pwm samples per signal period --> Always is 16 for 40k
+		keyboard[i].period = (20 - i) ; //Calculate number of pwm samples per signal period
+		debugUartSendUint16(keyboard[i].period);
+		debugUartSendString("\n\r");
 	}
+
 }
 
 void initTimer2(uint16_t freq)
@@ -51,7 +55,7 @@ void initTimer2(uint16_t freq)
 	uint32_t topValue = 0;
 	CMU_ClockEnable(cmuClock_TIMER2, true);
 	GPIO_PinModeSet(PIEZO_PORT, PIEZO_PIN, gpioModePushPull, 0); //Set output
-
+	GPIO_DriveModeSet(PIEZO_PORT, gpioDriveModeHigh);
 	TIMER_InitCC_TypeDef timerCCInit =
 	{
 		timerEventEveryEdge,	//value ignored -- note CC
@@ -69,13 +73,17 @@ void initTimer2(uint16_t freq)
 	//Configure CC channel 2
 	TIMER_InitCC(TIMER2, 2, &timerCCInit);
 	TIMER2->ROUTE = (3 << 16) |(1 << 2);         // connect PWM output (timer2, channel 2, Location 3) to PE13 (LED0)
+
 	//Set Top value for Timer with given frequency
 	uint32_t clock_freq = CMU_ClockFreqGet(cmuClock_HFPER);
 	debugUartSendString("Sys Freq: ");
 	debugUartSendUint16((uint16_t)(clock_freq >> 16));
-	debugUartSendUint16((uint16_t)(clock_freq & 0x0FF));
+	debugUartSendUint16((uint16_t)(clock_freq & 0x00FF));
+
 	debugUartSendString("\r\n");
-	topValue = clock_freq/freq;
+
+	topValue = (uint16_t)(clock_freq/freq);
+
 	TIMER_TopSet(TIMER2, topValue);
 	debugUartSendString("Freq: ");
 	debugUartSendUint16((uint16_t)freq);
@@ -118,7 +126,7 @@ uint16_t getNextSample(Note_t * note)
 	uint32_t ptr = note->index * returnSinSize() / note->period;
 	//Calculate next index
 	note->index = (note->index + 1) % note->period;
-	return returnSinIndex(ptr);
+	return (returnSinIndex(ptr));
 }
 
 void fillBufferWait(void)
@@ -156,7 +164,7 @@ void fillBufferWait(void)
 
 			}
 			//Save duty cycle to buffer
-			theBuffer[bufferPos] = nextDutyCycle;
+			theBuffer[bufferPos] = (nextDutyCycle > 525 ? 525 : nextDutyCycle);
 			bufferPos++;
 		}
 		//Indicate the buffer is full --> This is set in the DMA callback

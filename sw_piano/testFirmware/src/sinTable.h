@@ -11,7 +11,7 @@
 #define _USE_MATH_DEFINES
 #include <cstdint>
 
-#define NUM_SINE_SAMPLES 4096
+#define NUM_SINE_SAMPLES 1024
 //#define AMPLITUDE	4
 
 //extern  const uint32_t sineTableLength;

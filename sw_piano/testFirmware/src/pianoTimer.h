@@ -23,7 +23,7 @@
 #define PIEZO_PORT		gpioPortE
 #define PIEZO_PIN		13
 
-#define PWM_FREQ  (20000) //PWM Carrier frequency in Hz
+#define PWM_FREQ  (40000) //PWM Carrier frequency in Hz
 #define NUM_NOTES 12		//Number of notes on the keyboard.
 
 #define PWM_TABLE_SIZE    200

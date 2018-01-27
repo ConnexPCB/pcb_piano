@@ -98,7 +98,7 @@ uint8_t i = 0;
 		  if(getButton(i))
 		  {
 			  debugUartSendString("Button is Pressed: ");
-			  debugUartSendUint8(count);
+			  debugUartSendUint8(i);
 			  debugUartSendString("\n\r");
 			  playNote((3+i),3000);
 		  }
@@ -119,7 +119,7 @@ uint8_t i = 0;
 	  rx_char = debugUartReceive();
 	  if(rx_char)
 	  {
-		  playNote((uint8_t)(rx_char - 48), DEFAULT_NOTE_LENGTH);
+		  playNote((uint8_t)(rx_char - 48), 10000);
 		  debugUartSendString("Playing Note: ");
 		  debugUartSendChar(rx_char);
 		  debugUartSendString("\n\r");

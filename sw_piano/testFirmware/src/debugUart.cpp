@@ -9,8 +9,8 @@
 
 
 
-static circularBuffer<char> debugUartCharTxBuff(200);
-static circularBuffer<char> debugUartCharRxBuff(100);
+static circularBuffer<volatile char> debugUartCharTxBuff(300);
+static circularBuffer<volatile char> debugUartCharRxBuff(100);
 
 void LEUART0_IRQHandler(void)
 {
@@ -31,6 +31,7 @@ void LEUART0_IRQHandler(void)
 		debugUartCharRxBuff.put(LEUART0->RXDATA);
 	}
 }
+
 //@brief Initialize debug LEUART for 9600 baud at defualt locations
 void initDebugUart(void)
 {

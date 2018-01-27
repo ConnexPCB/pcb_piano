@@ -34,7 +34,7 @@ void dmaTransferDone(unsigned int channel, bool primary, void *user);
  *  channel is set to be the TIMER2 COMP BUFFER register, and transfer complete interrupt
  *  is enabled.
  */
-void setupPwnDma( uint16_t * bufferA,  uint16_t * bufferB, uint16_t bufferLength, bool * bufferEmtpyFlag);
+void setupPwnDma( uint16_t * bufferA,  uint16_t * bufferB, uint16_t bufferLength, volatile bool * bufferEmtpyFlag);
 
 bool isPrimaryBuffActive(void);
 
