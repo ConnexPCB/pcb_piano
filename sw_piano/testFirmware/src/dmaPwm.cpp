@@ -26,7 +26,7 @@
 
 /* GLOBAL VARIABLES */
 
-/* DMA control block, must be aligned to 256. */
+
 #if defined (__ICCARM__)
 #pragma data_alignment=256
 DMA_DESCRIPTOR_TypeDef dmaControlBlock[DMA_CHAN_COUNT * 2];
@@ -42,7 +42,7 @@ static uint16_t Max_Table_Size = 0;
 static bool primaryBuffActive = true;
 
 /* DMA callback structure */
-DMA_CB_TypeDef cb[DMA_CHAN_COUNT];
+static DMA_CB_TypeDef cb[DMA_CHAN_COUNT];
 
 /**************************************************************************//**
  * @brief  DMA Callback function
@@ -56,7 +56,7 @@ void dmaTransferDone(unsigned int channel, bool primary, void *user)
   //(void) channel;
   //(void) primary;
   *((bool *)user) = true; //Set clear buffer flag
-  primaryBuffActive = primary;
+  primaryBuffActive = primary; //This interrupt is called after every DMA to refresh the buffer
 
   DMA_RefreshPingPong(channel,
 		  	  	  	  primary,

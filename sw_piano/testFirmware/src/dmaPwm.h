@@ -18,6 +18,17 @@
 
 #include "debugUart.h"
 
+#if defined (__ICCARM__)
+#pragma data_alignment=256
+extern DMA_DESCRIPTOR_TypeDef dmaControlBlock[DMA_CHAN_COUNT * 2];
+#elif defined (__CC_ARM)
+extern DMA_DESCRIPTOR_TypeDef dmaControlBlock[DMA_CHAN_COUNT * 2] __attribute__ ((aligned(256)));
+#elif defined (__GNUC__)
+extern DMA_DESCRIPTOR_TypeDef dmaControlBlock[DMA_CHAN_COUNT * 2] __attribute__ ((aligned(256)));
+#else
+#error Undefined toolkit, need to define alignment
+#endif
+
 /**************************************************************************//**
  * @brief  DMA Callback function for Timer 2
  *
